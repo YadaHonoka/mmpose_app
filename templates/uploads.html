@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>アップロードされたファイル</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <h1>アップロードされたファイル</h1>
+    <ul><!-- ul要素でリストを作成 -->
+        {% for file in files %} <!-- for文でファイルのリストを表示 -->
+            <li>
+                <a href="{{ file }}" target="_blank">{{ file }}</a> <!-- a要素でファイルのリンクを作成 --><!-- href属性でリンク先を指定 --><!-- target属性でリンク先を新しいウィンドウで開くように指定 -->
+                <button onclick="deleteFile('{{ file }}')">削除</button> <!-- button要素でファイルを削除するボタンを作成 --><!-- onclick属性でボタンをクリックしたときの処理を指定 --> <!-- ファイルのURLを引数として渡す -->
+                <button onclick="analyzeFile('{{ file }}')">解析</button>
+                <button onclick="viewAnalysis('{{ file }}')">解析結果</button>
+            </li>
+        {% endfor %}
+    </ul>
+    <a href="/">戻る</a>
+
+    <button id="deleteAllButton">すべてのファイルを削除</button>
+    <script> 
+        function deleteFile(fileUrl) { // ファイルを削除する関数
+            const filename = fileUrl.split('/').pop(); // ファイル名を取得
+            fetch(`/delete/${filename}`, { // fetch関数でファイルを削除する
+                method: 'DELETE' // HTTPメソッドを指定
+            }).then(response => response.json()) // レスポンスをJSON形式に変換
+              .then(data => { // レスポンスのデータを取得
+                  if (data.success) { // ファイルの削除が成功した場合
+                      alert('ファイルが削除されました'); // アラートを表示
+                      location.reload(); // ページをリロード
+                  } else {  // ファイルの削除が失敗した場合
+                      alert('ファイルの削除に失敗しました'); // アラートを表示 
+                  }
+              })
+              .catch(error => console.log(error)); // エラーが発生した場合はコンソールにエラーメッセージを表示
+        }
+
+        function analyzeFile(fileUrl) { // ファイルを解析する関数
+            const filename = fileUrl.split('/').pop(); // ファイル名を取得
+            window.location.href = `/analyze/${filename}`; // ページをリダイレクト
+        }
+
+        function viewAnalysis(fileUrl) {
+            const filename = fileUrl.split('/').pop();
+            window.location.href = `/analyze_result/${filename}`;
+        }
+        // すべてのファイルを削除する 
+        document.getElementById('deleteAllButton').onclick = function() { // ボタンをクリックしたときの処理
+            fetch('/delete_all', {  // fetch関数ですべてのファイルを削除する
+                method: 'DELETE'      // HTTPメソッドを指定
+            }).then(response => response.json()) // レスポンスをJSON形式に変換
+              .then(data => { // レスポンスのデータを取得
+                  if (data.success) { // ファイルの削除が成功した場合
+                      alert('すべてのファイルが削除されました'); // アラートを表示
+                      location.reload();    // ページをリロード
+                  }
+              })
+              .catch(error => console.log(error)); // エラーが発生した場合はコンソールにエラーメッセージを表示
+        };
+    </script>
+</body>
+</html>

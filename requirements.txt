@@ -1,0 +1,28 @@
+# 基本ライブラリ
+torch>=1.7
+mmcv-full>=1.7.0
+mmdet>=2.0.0
+mmengine>=0.1.0
+pycocotools>=2.0.0
+opencv-python
+flask
+mmpose
+
+# その他の依存関係
+numpy
+scipy
+pillow
+matplotlib
+six
+terminaltables
+tqdm
+json_tricks
+pytest
+pytest-cov
+pytest-runner
+pytest-timeout
+pytest-forked
+pytest-xdist
+flake8
+isort
+yapf

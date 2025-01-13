@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>解析結果</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <h1>解析結果</h1>
+    <p>ファイル名: {{ filename }}</p>
+    <p>未解析のデータです。</p>
+    <a href="/uploads">戻る</a>
+</body>
+</html>

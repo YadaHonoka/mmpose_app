@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8"><!-- 文字コードをUTF-8に指定 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><!-- ビューポートの設定 --><!-- content属性でビューポートの設定を指定 -->
+    <!--viewport（ビューポート）を設定することによってレスポンシブデザインを実現できるようになるらしい-->
+
+    <title>短距離走 姿勢推定</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"> <!-- スタイルシートを読み込む -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.3/nouislider.min.css"> <!-- noUiSliderのスタイルシートを読み込む -->
+</head>
+<body>
+    <h1>短距離走の姿勢推定</h1>
+    
+    <!-- 映像アップロードフォーム -->
+     <!-- 50m走タイム入力フォーム -->
+      <!-- 新しいファイル名入力フォーム -->
+       <!-- 動画プレイヤー -->
+        <!-- 動画編集フォーム -->
+        <!-- ダウンロードボタン -->
+    <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data"> <!-- action属性でPOST先のURLを指定 --><!-- enctype属性でファイルをアップロードすることを指定 --><!-- method属性でHTTPメソッドを指定 -->
+        <label for="videoFile">映像をアップロード：</label> <!-- label要素でフォームの説明を表示 --> 
+        <!-- input要素でファイルをアップロードするフォームを作成 --><!-- id属性でファイルをアップロードするフォームの識別子を指定 --><!-- name属性でファイルをアップロードするフォームの名前を指定 --><!-- accept属性でアップロードできるファイルの種類を指定 --><!-- required属性でフォームが必須であることを指定 -->
+        <input type="file" id="videoFile" name="videoFile" accept="video/mp4,video/quicktime,video/mov" required>
+        <br><br>
+        
+        <!-- 50m走タイム入力フォーム -->
+        <label for="time">50m走のタイム (秒)：</label>
+        <input type="number" id="time" name="time" step="0.01"  value=7.00 required>
+        <br><br>
+
+        <!-- 新しいファイル名入力フォーム -->
+        <label for="newFilename">新しいファイル名：</label>
+        <input type="text" id="newFilename" name="newFilename" value="sprint_movie" required>
+        <br><br>
+
+        <button type="submit">アップロード</button>
+    </form>
+
+    <!-- 動画プレイヤー -->
+    <video id="videoPlayer" width="640" controls style="display:none;"><!-- video要素で動画プレイヤーを作成 --><!-- id属性で動画プレイヤーの識別子を指定 --><!-- width属性で動画プレイヤーの幅を指定 --><!-- controls属性で動画プレイヤーにコントロールを表示 --><!-- style属性で動画プレイヤーを非表示にする -->
+        <source id="videoSource" src="" type="video/mp4"><!-- 動画のURLはJavaScriptで設定 -->
+        お使いのブラウザは動画タグに対応していません。 <!-- 動画タグに対応していないブラウザの場合に表示 -->
+    </video>
+
+    <!-- 50m走タイムの結果を表示するためのp(paragraph)要素 -->
+    <p id="timeResult"></p> <!-- 50m走タイムの結果を表示するためのp要素 --><!-- id属性で50m走タイムの結果を表示するためのp要素の識別子を指定 -->
+    <button id="deleteButton" style="display:none;">削除</button> <!-- 動画を削除するためのボタン --><!-- id属性で動画を削除するためのボタンの識別子を指定 --><!-- style属性でボタンを非表示にする -->
+
+    <!-- 動画編集フォーム -->
+    <div id="editForm" style="display:none;">
+        <div id="slider" style="width: 640px; margin-top: 20px;"></div>
+        <button id="cutButton">カット編集</button>
+    </div>
+
+    <!-- ダウンロードボタン -->
+     <!-- a(anchor:リンクの出発点＆到達点)要素でダウンロードボタンを作成 --><!-- id属性でダウンロードボタンの識別子を指定 --><!-- href属性でダウンロードボタンのリンク先を指定 --><!-- download属性でダウンロードボタンをクリックしたときにファイルをダウンロードするかどうかを指定 --><!-- style属性でダウンロードボタンを非表示にする -->
+    <a id="downloadButton" href="#" download style="display:none;">ダウンロード</a>
+
+    <a href="/uploads" target="_blank">アップロードされたファイルを表示</a><!-- a要素でアップロードされたファイルを表示するリンクを作成 --><!-- href属性でリンク先を指定 --><!-- target属性でリンク先を新しいウィンドウで開くように指定 -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.3/nouislider.min.js"></script><!-- noUiSliderのスクリプトを読み込む -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script> <!-- スクリプトを読み込む -->
+</body>
+</html>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>解析中...</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <meta http-equiv="refresh" content="40;url={{ url_for('analyze_result', filename=filename) }}"> <!-- 20秒後にリダイレクト --> <!-- ページをリロードする -->
+</head>
+<body>
+    <h1>解析中...</h1>
+    <p>ファイル名: {{ filename }}</p>
+    <p>しばらくお待ちください。</p>
+    <script>
+        window.onload = function() { // ページが読み込まれたときの処理
+            fetch(`/start_analysis/{{ filename }}`); // 解析を開始 // ファイル名を引数として渡す
+        }; // ページが読み込まれたときに解析を開始
+    </script>
+</body>
+</html>

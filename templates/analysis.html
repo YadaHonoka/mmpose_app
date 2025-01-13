@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>解析結果</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart.jsのスクリプトを読み込む -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script> <!-- 日付対応プラグイン -->
+    <!-- Video.js CSS -->
+<link href="https://vjs.zencdn.net/7.10.2/video-js.css" rel="stylesheet" />
+
+<!-- Video.js JS -->
+<script src="https://vjs.zencdn.net/7.10.2/video.js"></script>
+</head>
+
+<body>
+    <h1>解析結果</h1>
+    <p>ファイル名: {{ filename }}</p>
+    <video id="analysis_videoPlayer" width="640" height="360" controls autoplay muted>
+        <source src="{{ hpe_video_url }}" type="video/mp4">
+        お使いのブラウザは動画タグに対応していません。
+    </video>
+    <a href="/uploads">戻る</a>
+
+    <h1>あなたの競技レベル</h1>
+    <p><span id="result_classification"></span></p>
+
+    <a href="/">戻る</a>
+    <script>
+        // index.htmlで保存した50m走のタイムを取り出す
+        const time = localStorage.getItem("time");
+        if (time) {
+            // APIにタイムを送信して結果を取得
+            fetch(`/level?time=${time}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.level) {
+                        document.getElementById("result_classification").textContent = `競技レベル: ${data.level}`;
+                    } else if (data.error) {
+                        document.getElementById("result_classification").textContent = `エラー: ${data.error}`;
+                    }
+                })
+                .catch(error => {
+                    document.getElementById("result_classification").textContent = `エラー: サーバーにアクセスできません`;
+                    console.error(error);
+                });
+        } else {
+            document.getElementById("result_classification").textContent = "タイムが保存されていません";
+        }
+    </script>
+
+    <a href="{{ hpe_video_url }}">{{ hpe_video_url }}
+    </a>
+
+    <h1>video.jsを使用してみる</h1>
+    <video id="my-video" class="video-js vjs-default-skin" controls preload="auto" width="600" height="400">
+        <source src="http://localhost:5000/video/fixed_hpecut_sprint_movie.mp4" type="video/mp4" />
+        <p class="vjs-no-js">
+          To view this video please enable JavaScript, and consider upgrading to a web browser that supports HTML5 video.
+        </p>
+    </video>
+    <script>
+    var player = videojs('my-video');
+    </script>
+
+
+
+
+    <video controls>
+        <source src="http://localhost:5000/video/h264_low.mp4" type="video/mp4">
+    </video>
+    <video controls>
+        <source src="/video/hpecut_sprint_movie.mp4" type="video/mp4">
+    </video>
+    
+    <h1>月別時系列データグラフ</h1>
+    <canvas id="myChart" width="100" height="100"></canvas>
+
+    <script>
+        // Flaskサーバーから時系列データを取得してグラフを描画
+        fetch('/api/data')
+            .then(response => response.json())
+            .then(data => {
+                // 取得したデータをコンソールに表示
+                console.log(data);
+
+                const ctx = document.getElementById('myChart').getContext('2d');
+                const myChart = new Chart(ctx, {
+                    type: 'line',  // グラフのタイプ (line)
+                    data: {
+                        labels: data.dates,  // 日付（X軸）
+                        datasets: [{
+                            label: 'データ',
+                            data: data.values,  // Y軸のデータ
+                            borderColor: 'rgb(75, 192, 192)',
+                            fill: false,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            x: {
+                                type: 'time',  // 時系列データを表示するための設定
+                                time: {
+                                    unit: 'month',  // 単位（ここでは月単位）
+                                    tooltipFormat: 'll',  // ツールチップに表示する日付フォーマット
+                                },
+                                title: {
+                                    display: true,
+                                    text: '日付',
+                                }
+                            },
+                            y: {
+                                beginAtZero: true, // Y軸の最小値を0に設定
+                                title: { // Y軸のタイトル
+                                    display: true, // 表示する
+                                    text: '値'
+                                }
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    </script>
+
+</body>
+</html>
